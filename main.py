@@ -5,6 +5,7 @@ from numpy import reshape
 from PIL import Image, ImageTk
 import os
 from tkinter import filedialog, Tk, Canvas, Entry, Text, Button, PhotoImage
+import gzip
 
 current_dir = os.path.dirname(__file__)
 assets_path = os.path.join('assets', 'frame')
@@ -18,8 +19,19 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 global svm_model
-model_path = os.path.join(current_dir, "Models", "NeuroDetector_SVM.sav")
-svm_model = pickle.load(open(model_path, 'rb'))
+
+compressed_model_path = os.path.join(current_dir, 'Models', 'compressed_model.pkl.gz')
+decompressed_model_path = os.path.join(current_dir, 'Models', 'NeuroDetector_SVM.pkl')
+
+if Path(decompressed_model_path).is_file():
+    with open(decompressed_model_path, 'rb') as f:
+        svm_model = pickle.load(f)
+else:
+    with gzip.open(compressed_model_path, 'rb') as f:
+        svm_model = pickle.load(f)
+
+#model_path = os.path.join(current_dir, "Models", "NeuroDetector_SVM.sav")
+#svm_model = pickle.load(open(model_path, 'rb'))
 
 window = Tk()
 window.title("NeuroDetect")
