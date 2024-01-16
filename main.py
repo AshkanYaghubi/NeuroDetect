@@ -1,11 +1,12 @@
 from pathlib import Path
-import pickle
+#import pickle
 from cv2 import imread, resize
 from numpy import reshape
 from PIL import Image, ImageTk
 import os
 from tkinter import filedialog, Tk, Canvas, Entry, Text, Button, PhotoImage
-import gzip
+#import gzip
+import tf.keras.models.load_model
 
 current_dir = os.path.dirname(__file__)
 assets_path = os.path.join('assets', 'frame')
@@ -18,8 +19,9 @@ ASSETS_PATH = OUTPUT_PATH / Path(assets_path)
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-global svm_model
+#global svm_model
 
+'''
 compressed_model_path = os.path.join(current_dir, 'Models', 'compressed_model.pkl.gz')
 decompressed_model_path = os.path.join(current_dir, 'Models', 'NeuroDetector_SVM.pkl')
 
@@ -32,6 +34,14 @@ else:
 
 #model_path = os.path.join(current_dir, "Models", "NeuroDetector_SVM.sav")
 #svm_model = pickle.load(open(model_path, 'rb'))
+'''
+global model, binary_model
+
+model_path = os.path.join(current_dir, 'Models', 'model.h5')
+binary_model_path = os.path.join(current_dir, 'Models', 'model_binary.h5')
+
+model = load_model(model_path)
+binary_model = load_model(binary_model_path)
 
 window = Tk()
 window.title("NeuroDetect")
@@ -57,8 +67,12 @@ def predict():
     img = resize(img1, (200,200))
     img = reshape(img, (1,-1))
     img = img/255
-    pred = svm_model.predict(img)
-    dec = {0 : "No_Tumor", 1 : "Glioma_Tumor", 2 : "Meningioma_Tumor", 3 : "Pituitary_Tumor"}
+    pred = model.predict(img)
+    dec = {0 : "No_Tumor", 1 : "Glioma_Tumor", 2 : "Meningioma_Tumor", 3 : "Pituitary_Tumor", 4 : "Potential_Tumor"}
+    if pred[0] == 0:
+        pred_binary = binary_model.predict(img)
+        if pred_binary[0] != 0:
+            pred[0] = 4
     image_6_path = 'image_6_' + str(dec[pred[0]]) + '.png'
     image_6_photo = PhotoImage(file=relative_to_assets(image_6_path))
     button_4.configure(image = image_6_photo)
