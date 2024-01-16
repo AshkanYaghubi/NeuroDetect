@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 import os
 from tkinter import filedialog, Tk, Canvas, Entry, Text, Button, PhotoImage
 #import gzip
-import tf.keras.models.load_model
+import tensorflow.keras.models.load_model
 
 current_dir = os.path.dirname(__file__)
 assets_path = os.path.join('assets', 'frame')
