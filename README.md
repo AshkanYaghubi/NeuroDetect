@@ -25,11 +25,12 @@ Make sure you have the following prerequisites installed:
 - Numpy
 - Pillow
 - Tkinter
+- Tensorflow
 
 You can install these dependencies using the following command:
 
 ```bash
-pip install opencv-python numpy pillow tk
+pip install opencv-python numpy pillow tk tensorflow
 ```
 
 ## Installation
@@ -65,6 +66,24 @@ python main.py
 - Numpy - Numerical Computing Library
 - Pillow - Python Imaging Library
 - Tkinter - GUI Library
+- Tensorflow - Deep Learning and Machine Learning Framework
+
+## Future Work
+
+As part of ongoing development, the NeuroDetect project aims to enhance its capabilities and reliability. The following are planned future works:
+
+### 1. Addressing False Negatives
+
+In future iterations, we will focus on minimizing false negatives in the brain tumor classification process. Specifically, we aim to ensure that the additional binary classification model, designed to reduce false negatives, produces results that are statistically incoherent with those of the base model. By running rigorous statistical tests, we intend to validate that false negatives from both models have no common patterns, reinforcing the effectiveness of their combined application in preventing occurrences of false negatives.
+
+### 2. Continuous Improvement
+
+We are committed to ongoing research and development to incorporate the latest advancements in machine learning and medical imaging. Continuous refinement of the models, exploration of new techniques, and adaptation to emerging technologies will be integral to the NeuroDetect project's mission of providing accurate and reliable brain tumor detection.
+
+### 3. Community Engagement
+
+We welcome contributions from the open-source community to collaboratively improve and expand NeuroDetect's capabilities. Feel free to contribute through bug fixes, feature enhancements, or by sharing insights and feedback.
+
 
 ## License
  This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
