@@ -1,12 +1,13 @@
 from pathlib import Path
 #import pickle
 from cv2 import imread, resize
-from numpy import reshape
+import numpy as np
 from PIL import Image, ImageTk
 import os
 from tkinter import filedialog, Tk, Canvas, Entry, Text, Button, PhotoImage
 #import gzip
-import tensorflow.keras.models.load_model
+import tensorflow as tf
+import numpy as np
 
 current_dir = os.path.dirname(__file__)
 assets_path = os.path.join('assets', 'frame')
@@ -40,8 +41,8 @@ global model, binary_model
 model_path = os.path.join(current_dir, 'Models', 'model.h5')
 binary_model_path = os.path.join(current_dir, 'Models', 'model_binary.h5')
 
-model = load_model(model_path)
-binary_model = load_model(binary_model_path)
+model = tf.keras.models.load_model(model_path)
+binary_model = tf.keras.models.load_model(binary_model_path)
 
 window = Tk()
 window.title("NeuroDetect")
@@ -61,19 +62,23 @@ def open_dialog():
     button_1.image = image
 
 
-
 def predict():
-    img1 = imread(path,0)
-    img = resize(img1, (200,200))
-    img = reshape(img, (1,-1))
-    img = img/255
-    pred = model.predict(img)
+    img = imread(path, 1)
+    img = resize(img, (150,150))
+    img_model = np.expand_dims(img, axis = 0).astype('float32')
+    pred = model.predict(img_model)
+    pred_index = np.argmax(pred, axis = 1)[0]
     dec = {0 : "No_Tumor", 1 : "Glioma_Tumor", 2 : "Meningioma_Tumor", 3 : "Pituitary_Tumor", 4 : "Potential_Tumor"}
-    if pred[0] == 0:
-        pred_binary = binary_model.predict(img)
-        if pred_binary[0] != 0:
-            pred[0] = 4
-    image_6_path = 'image_6_' + str(dec[pred[0]]) + '.png'
+    if pred_index == 0:
+        img_binary = img/255.0
+        img_binary = np.expand_dims(img_binary, axis=0)
+        y_pred_prob = binary_model.predict(img_binary)
+        if y_pred_prob[0, 0] > 0.5:
+            pred_index = 4
+        else:
+            pred_index = 0
+
+    image_6_path = 'image_6_' + str(dec[pred_index]) + '.png'
     image_6_photo = PhotoImage(file=relative_to_assets(image_6_path))
     button_4.configure(image = image_6_photo)
     button_4.image = image_6_photo
